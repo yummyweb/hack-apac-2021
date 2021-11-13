@@ -5,6 +5,7 @@ import requests
 import socket
 from amadeus import Client, ResponseError
 from secret import *
+from pyairports.airports import Airports
 
 HOST_NAME = os.environ.get("OPENSHIFT_APP_DNS", "localhost")
 APP_NAME = os.environ.get("OPENSHIFT_APP_NAME", "hack-apac-2021")
@@ -16,15 +17,47 @@ client = Client(
     client_id=AMADEUS_API_KEY,
     client_secret=AMADEUS_API_SECRET
 )
+airports = Airports()
 
-@app.route("/", methods=["GET", "POST"])
+@app.route("/", methods=["GET"])
 def index():
     # return "Hello World!"
     return render_template("index.html")
 
-@app.route("/results")
+@app.route("/results", methods=["POST"])
 def results():
-    return render_template("results.html")
+    try:
+        resp = client.shopping.flight_offers_search.get(
+            originLocationCode=str(request.form["origin"]),
+            destinationLocationCode=str(request.form["to"]),
+            departureDate='2022-06-01',
+            adults=int(request.form["adults"]))
+
+        flights = []
+        for d in resp.data[:6]:
+            flight = {
+                "travel": []
+            }
+            for s in d["itineraries"][0]["segments"]:
+                depAirport = airports.airport_iata(s["departure"]["iataCode"])
+                arrAirport = airports.airport_iata(s["arrival"]["iataCode"])
+                airline = client.reference_data.airlines.get(airlineCodes=s["carrierCode"])
+                flight["travel"].append({
+                    "departure": {
+                        "airport": depAirport[0]
+                    },
+                    "arrival": {
+                        "airport": arrAirport[0]
+                    },
+                    "airline": airline.data[0]["commonName"]
+                })
+
+            flights.append(flight)
+
+        return render_template("results.html", flights=flights)
+    except ResponseError as error:
+        print(error)
+        return render_template("results.html")
 
 @app.route("/hello")
 def hello():

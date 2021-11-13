@@ -1,0 +1,33 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: rgb(238, 244, 253);
+}
+
+.container {
+    padding: 60px;
+    display: flex;
+    margin-left: 10%;
+}
+
+.flights {
+    display: flex;
+    flex-direction: column;
+}
+
+.flight {
+    display: flex;
+    background-color: white;
+    padding: 20px;
+    border-radius: 6px;
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+.flight-airport {
+    margin-left: 10px;
+}

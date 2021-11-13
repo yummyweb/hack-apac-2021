@@ -5,6 +5,11 @@
   padding: 0;
 }
 
+::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: black;
+  opacity: 1;
+}
+
 body {
   width: 100%;
   display: block;
@@ -248,6 +253,16 @@ header nav .myAccount .ctaGroup .cta.active {
   margin-right: 0;
   margin-left: 8px;
   font-size: 14px;
+}
+
+.item input {
+  color: black;
+  font-size: 18px;
+  border: none;
+}
+
+.item input:focus {
+  outline: none;
 }
 
 .booking_details .item .cta {

@@ -15,21 +15,21 @@
             <h2>XED</h2>
         </div>
         <p class="reim">Travelling Reimagined</p>
-        <div class="booking_info">
+        <form class="booking_info" method="POST" action="/results">
             <div class="booking_details">
             <div class="item">
                 <i class="fa fa-search"></i>
-                From?
+                <input name="origin" placeholder="From?">
             </div>
             <div class="item">
-            Going to?
+                <input name="to" placeholder="Going to?">
             </div>
             <div class="item">
-                Date
-                </div>
+                <input name="adults" placeholder="Adults">
+            </div>
             <button>Search</button>
             </div>
-        </div>
+        </form>
         </div>
 
         <img src="../static/images/hotel.png" class="hotel">
