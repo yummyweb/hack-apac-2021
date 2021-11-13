@@ -1,0 +1,4 @@
+flask
+gunicorn==19.8.*
+caer
+requests
