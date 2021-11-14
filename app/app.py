@@ -56,7 +56,7 @@ def results():
 
         return render_template("results.html", flights=flights)
     except ResponseError as error:
-        print(error)
+        print(f"[Error] {error}")
         return render_template("results.html")
 
 @app.route("/hello")
