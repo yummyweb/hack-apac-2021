@@ -6,7 +6,7 @@
 }
 
 ::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
-  color: black;
+  color: azure;
   opacity: 1;
 }
 
@@ -488,6 +488,11 @@ header nav .myAccount .ctaGroup .cta.active {
 h2 {
   font-size: 40px;
 }
+
+#title-xed {
+  font-size: 75px;
+}
+
 .reim {
   font-size: 26px;
 }
