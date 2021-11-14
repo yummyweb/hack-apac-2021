@@ -13,10 +13,19 @@
             {% for flight in flights %}
                 <div class="flight">
                     {% for t in flight.travel %}
-                        <p class="flight-airport">{{ t.departure.airport }}</p>
-                        <p class="flight-airport">{{ t.arrival.airport }}</p>
-                        <p class="flight-airport">{{ t.airline }}</p>
+                        {% if flight.travel|length > loop.index0+1 %}
+                            {% if t.arrival.airport != flight.travel[loop.index0+1].departure %}
+                                <p class="flight-airport">{{ t.departure.airport }}</p>→<p class="flight-airport">{{ t.arrival.airport }}</p>
+                            {% endif %}
+                        {% else %}
+                            {% if flight.travel|length == 1 %}
+                                <p class="flight-airport">{{ t.departure.airport }}</p>→<p class="flight-airport">{{ t.arrival.airport }}</p>
+                            {% else %}
+                                →<p class="flight-airport">{{ t.arrival.airport }}</p>
+                            {% endif %}
+                        {% endif %}
                     {% endfor %}
+                    <p class="flight-airport">{{ flight.price }}</p>
                 </div>
             {% endfor %}
         </div>

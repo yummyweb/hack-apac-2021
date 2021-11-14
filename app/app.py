@@ -1,3 +1,4 @@
+from babel import numbers
 import os 
 from flask import Flask, json, jsonify, request, render_template
 import numpy as np
@@ -21,7 +22,6 @@ airports = Airports()
 
 @app.route("/", methods=["GET"])
 def index():
-    # return "Hello World!"
     return render_template("index.html")
 
 @app.route("/results", methods=["POST"])
@@ -35,8 +35,10 @@ def results():
 
         flights = []
         for d in resp.data[:6]:
+            price = numbers.format_currency(float(d["price"]["total"]), d["price"]["currency"], locale='en')
             flight = {
-                "travel": []
+                "travel": [],
+                "price": price
             }
             for s in d["itineraries"][0]["segments"]:
                 depAirport = airports.airport_iata(s["departure"]["iataCode"])
