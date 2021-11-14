@@ -3,29 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Xed</title>
+    <title>Xed - Travelling Reimagined</title>
     <link rel="stylesheet" href="../static/css/font.css" />
-    <link rel="stylesheet" href="../static/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="../static/css/font-awesome4.min.css" />
     <link rel="stylesheet" href="../static/css/style.css" />
 </head>
 <body>
     <div class="container">
         <div class="hotel_content">
         <div class="info">
-            <h2>XED</h2>
+            <h2 id="title-xed">XED</h2>
         </div>
         <p class="reim">Travelling Reimagined</p>
         <form class="booking_info" method="POST" action="/results">
             <div class="booking_details">
             <div class="item">
                 <i class="fa fa-search"></i>
-                <input name="origin" placeholder="From?">
+                <!-- <i class="fa fa-plane-arrival"></i> -->
+                <input name="origin" placeholder="Where from?" style="color: azure;">
             </div>
             <div class="item">
-                <input name="to" placeholder="Going to?">
+                <!-- <i class="fa fa-plane-departure"></i> -->
+                <input name="to" placeholder="Where to?" style="color: azure;">
             </div>
             <div class="item">
-                <input name="adults" placeholder="Adults">
+                <input name="adults" placeholder="Adults" style="color: azure;">
             </div>
             <button>Search</button>
             </div>
