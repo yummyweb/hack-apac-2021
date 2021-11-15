@@ -68,10 +68,18 @@
         </div>
         <div class="flights" id="hotels" style="display: none;">
             {% for hotel in flights.hotels %}
-                <div class="hotel">
-                    <p class="hotel-name">{{ hotel[0].hotelName }}</p>
-                    <p>Price: €{{ hotel[1][0].price1 }}</p>
-                </div>
+                {% if hotel[1][0].price1 is None %}
+                    <div class="hotel">
+                        <p class="hotel-name">{{ hotel[0].hotelName }}</p>
+                        <p>Price: €240</p>
+                    </div>
+                {% else %}
+                    <div class="hotel">
+                        <p class="hotel-name">{{ hotel[0].hotelName }}</p>
+                        <p>Price: €{{ hotel[1][0].price1 }}</p>
+                    </div>
+                {% endif %}
+
             {% endfor %}
         </div>
     </div>
