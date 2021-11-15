@@ -69,7 +69,7 @@ def results():
     try:
         origin_airport = get_airport(request.form["origin"])
         destination_airport = get_airport(request.form["to"])
-        covid_data = get_covid_data(request.form["origin"], request.form["to"])
+        covid_data = get_covid_data(str(request.form["origin"]), str(request.form["to"]))
 
         resp = client.shopping.flight_offers_search.get(
             originLocationCode=str(origin_airport["iataCode"]),
@@ -121,7 +121,7 @@ def get_covid_data(origin: str, destination : str):
         origin_country_name = "Spain"
     origin_country_code = pycountry.countries.search_fuzzy(origin_country_name)[0].alpha_2 # US
 
-    output = amadeus_get(f"/v1/duty-of-care/diseases/covid19-area-report?countryCode={country_code}")
+    output = amadeus_get(f"/v1/duty-of-care/diseases/covid19-area-report?countryCode={destination_country_code}")
     if output is None:
         raise ValueError("output is None")
     
@@ -161,8 +161,10 @@ def get_covid_data(origin: str, destination : str):
     testing_rules = testing["rules"] # URL to testing requirements 
 
     # Quarantine
-    quarantine = output["data"]["areaAccessRestriction"]["diseaseTesting"]["quarantineModality"]
+    print(output["data"]["areaAccessRestriction"]["diseaseTesting"])
+    quarantine = output["data"]["areaAccessRestriction"]["diseaseTesting"]
     quarantine_requirements_text = quarantine["text"]
+    quarantine_requirements_mandatory = quarantine["requirement"]
     quarantine_requirements_url = quarantine["rules"] # URL to quarantine requirements
 
     # Mask usage
@@ -196,6 +198,9 @@ def get_covid_data(origin: str, destination : str):
         "testing": {
             "required": is_testing_required,
             "text": when_is_testing_required
+        },
+        "quarantine": {
+            "required": quarantine_requirements_mandatory
         }
     })
 
