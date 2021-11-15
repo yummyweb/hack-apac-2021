@@ -88,7 +88,10 @@ def results():
         except:
             destination_content = None
         covid_data = get_covid_data(str(request.form["origin"]), str(request.form["to"]))
-        hotel_list = get_hotels(destination_city)
+        try:
+            hotel_list = get_hotels(destination_city)
+        except: 
+            hotel_list = []
         resp = client.shopping.flight_offers_search.get(
             originLocationCode=str(origin_airport["iataCode"]),
             destinationLocationCode=str(destination_airport["iataCode"]),
@@ -126,10 +129,7 @@ def results():
         else:
             flights["destination"] = []
         
-        if hotel_list:
-            flights["hotels"] =  hotel_list[:10] if len(hotel_list) > 10 else hotel_list
-        else:
-            flights["hotels"] = []
+        flights["hotels"] =  hotel_list[:10] if len(hotel_list) > 10 else hotel_list
         return render_template("results.html", flights=flights)
     except ResponseError as error:
         print(f"[Error] {error}")
