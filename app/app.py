@@ -80,7 +80,7 @@ def get_hotels(city):
 
 @app.route("/", methods=["GET"])
 def index():
-    return render_templaste("index.html")
+    return render_template("index.html")
 
 @app.route("/results", methods=["POST"])
 def results():
