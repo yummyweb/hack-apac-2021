@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
 </head>
 <body>
+    {% if flights is not none %}
     <a href="index" class="home"><h2 id="title-xed">XED</h2></a>
     <header>
         <div class="menu-toggle" id="hamburger">
@@ -102,5 +103,9 @@
             document.getElementById("destination").style.display = "none"
         })
     </script>
+    
+    {% else %}
+    <a href="#" class="home"><h2 id="title-xed">Unfortunately, the API failed to    respond in time.</h2></a>
+    {% endif %}
 </body>
 </html>

@@ -115,7 +115,7 @@ def results():
             for s in d["itineraries"][0]["segments"]:
                 depAirport = airports.airport_iata(s["departure"]["iataCode"])
                 arrAirport = airports.airport_iata(s["arrival"]["iataCode"])
-                airline = client.reference_data.airlines.get(airlineCodes=s["carrierCode"])
+                # airline = client.reference_data.airlines.get(airlineCodes=s["carrierCode"])
                 flight["travel"].append({
                     "departure": {
                         "airport": depAirport[0]
@@ -123,7 +123,7 @@ def results():
                     "arrival": {
                         "airport": arrAirport[0]
                     },
-                    "airline": airline.data[0]["commonName"]
+                    # "airline": airline.data[0]["commonName"]
                 })
 
             flights["flights"].append(flight)
@@ -136,9 +136,11 @@ def results():
         
         flights["hotels"] =  hotel_list[:10] if len(hotel_list) > 10 else hotel_list
         return render_template("results.html", flights=flights)
+
     except ResponseError as error:
-        print(f"[Error] {error}")
-        return render_template("results.html")
+        raise error
+        # return render_template("results.html")
+        return render_template("results.html", flights=None)
 
 
 def get_covid_data(origin: str, destination : str):
