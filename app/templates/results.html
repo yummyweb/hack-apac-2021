@@ -20,7 +20,7 @@
             <nav>
                 <ul>
                     <li><a id="flight-link" href="#">Flights</a></li>
-                    <li><a href="#">Hotels</a></li>
+                    <li><a id="hotel-link" href="#">Hotels</a></li>
                     <li><a id="dest-link" href="#">Destination</a></li>
                 </ul>
             </nav>
@@ -36,7 +36,7 @@
                     <h2>COVID Level: 🟢</h2>
                 {% endif %}
                 <br>
-                {{ flights.covid.mask.text | safe }} All incoming passengers will need to be tested for COVID, {{ flights.covid.testing.text }}.
+                {{ flights.covid.mask.text|safe }} All incoming passengers will need to be tested for COVID, {{ flights.covid.testing.text }}.
             </div>
             {% for flight in flights.flights %}
                 <div class="flight">
@@ -59,9 +59,17 @@
         </div>
         <div class="flights" id="destination" style="display: none;">
             {% for destination in flights.destination %}
-                    <div class="flight">
-                        <p>{{ destination.name }}</p>
-                    </div>
+                <div class="flight">
+                    <p>{{ destination.name }}</p>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="flights" id="hotels" style="display: none;">
+            {% for hotel in flights.hotels %}
+                <div class="hotel">
+                    <p class="hotel-name">{{ hotel[0].hotelName }}</p>
+                    <p>Price: €{{ hotel[1][0].price1 }}</p>
+                </div>
             {% endfor %}
         </div>
     </div>
@@ -70,11 +78,19 @@
         document.getElementById("dest-link").addEventListener("click", () => {
             document.getElementById("destination").style.display = "flex"
             document.getElementById("flight").style.display = "none"
+            document.getElementById("hotels").style.display = "none"
         })
 
         document.getElementById("flight-link").addEventListener("click", () => {
             document.getElementById("destination").style.display = "none"
             document.getElementById("flight").style.display = "flex"
+            document.getElementById("hotels").style.display = "none"
+        })
+
+        document.getElementById("hotel-link").addEventListener("click", () => {
+            document.getElementById("hotels").style.display = "flex"
+            document.getElementById("flight").style.display = "none"
+            document.getElementById("destination").style.display = "none"
         })
     </script>
 </body>

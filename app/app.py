@@ -60,6 +60,16 @@ def get_airport(city):
     resp = amadeus_get(f"/v1/reference-data/locations?subType=CITY,AIRPORT&keyword={city}")
     return resp["data"][1]
 
+def get_city_code(city):
+    resp = amadeus_get(f"/v1/reference-data/locations?subType=CITY,AIRPORT&keyword={city}")
+    return resp["data"][0]
+
+def get_hotels(city):
+    r = requests.get(f"https://api.makcorps.com/free/{city}", headers={
+        "authorization": "JWT " + MAKCORPS_JWT
+    })
+    return r.json()["Comparison"]
+
 @app.route("/", methods=["GET"])
 def index():
     return render_template("index.html")
@@ -73,8 +83,12 @@ def results():
         r = requests.get(f"https://eu1.locationiq.com/v1/search.php?key={LOCATION_IQ}&city={destination_city}&format=json")
         destination_lat = str(r.json()[0]["lat"])
         destination_lng = str(r.json()[0]["lon"])
-        destination_content = amadeus_get(f"/v1/reference-data/locations/pois?latitude={destination_lat}&longitude={destination_lng}")["data"]
+        try:
+            destination_content = amadeus_get(f"/v1/reference-data/locations/pois?latitude={destination_lat}&longitude={destination_lng}")["data"]
+        except:
+            destination_content = None
         covid_data = get_covid_data(str(request.form["origin"]), str(request.form["to"]))
+        hotel_list = get_hotels(destination_city)
         resp = client.shopping.flight_offers_search.get(
             originLocationCode=str(origin_airport["iataCode"]),
             destinationLocationCode=str(destination_airport["iataCode"]),
@@ -107,7 +121,15 @@ def results():
             flights["flights"].append(flight)
         
         flights["covid"] = covid_data
-        flights["destination"] =  destination_content[:6] if len(destination_content) > 6 else destination_content
+        if destination_content:
+            flights["destination"] =  destination_content[:6] if len(destination_content) > 6 else destination_content
+        else:
+            flights["destination"] = []
+        
+        if hotel_list:
+            flights["hotels"] =  hotel_list[:10] if len(hotel_list) > 10 else hotel_list
+        else:
+            flights["hotels"] = []
         return render_template("results.html", flights=flights)
     except ResponseError as error:
         print(f"[Error] {error}")

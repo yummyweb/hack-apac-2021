@@ -49,6 +49,17 @@ body {
   font-size: 18px;
 }
 
+.hotel {
+  background-color: white;
+  padding: 30px;
+
+  border-radius: 30px;
+  border: 0px solid black;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+
+  margin-bottom: 45px;
+}
+
 .banner p {
   font-size: 18px;
 }
@@ -68,6 +79,10 @@ body {
   font-family: "Montserrat";
   margin-left: 30px;
   margin-right: 10px;
+}
+.hotel-name {
+  font-size: 30px;
+  font-family: "Montserrat";
 }
 #title-xed {
   font-size: 45px;
