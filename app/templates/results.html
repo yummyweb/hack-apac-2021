@@ -32,7 +32,7 @@
             <div class="banner">
                 <h3>COVID Requirements</h3>
                 <br>
-                {{ flights.covid.mask.text|safe }}
+                {{ flights.covid.mask.text|safe }} All incoming passengers will need to be tested for COVID, {{ flights.covid.testing.text }}.
             </div>
             {% for flight in flights.flights %}
                 <div class="flight">

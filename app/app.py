@@ -199,7 +199,8 @@ def get_covid_data(origin: str, destination : str):
             "text": when_is_testing_required
         },
         "quarantine": {
-            "required": quarantine_requirements_mandatory
+            "required": quarantine_requirements_mandatory,
+            "text": quarantine_requirements_text
         }
     })
 
