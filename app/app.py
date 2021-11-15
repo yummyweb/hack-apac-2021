@@ -7,6 +7,7 @@ import socket
 from amadeus import Client, ResponseError
 from secret import *
 from pyairports.airports import Airports
+import pycountry
 
 HOST_NAME = os.environ.get("OPENSHIFT_APP_DNS", "localhost")
 APP_NAME = os.environ.get("OPENSHIFT_APP_NAME", "hack-apac-2021")
@@ -20,6 +21,13 @@ client = Client(
 )
 airports = Airports()
 
+def authorizeAmadeus():
+    r = requests.post("https://test.api.amadeus.com/v1/security/oauth2/token", data={'grant_type': 'client_credentials', 'client_id': AMADEUS_API_KEY, 'client_secret': AMADEUS_API_SECRET})
+    if r.json()["state"] == "approved":
+        return r.json()["access_token"]
+    else:
+        return None
+
 @app.route("/", methods=["GET"])
 def index():
     return render_template("index.html")
@@ -30,10 +38,14 @@ def results():
         resp = client.shopping.flight_offers_search.get(
             originLocationCode=str(request.form["origin"]),
             destinationLocationCode=str(request.form["to"]),
-            departureDate='2022-06-01',
+            departureDate='2021-12-10',
             adults=int(request.form["adults"]))
 
         flights = []
+        destCountry = airports.airport_iata(str(request.form["to"]))[2]
+        originCountry = airports.airport_iata(str(request.form["origin"]))[2]
+        destCountryCode = pycountry.countries.search_fuzzy(destCountry)[0].alpha_2
+        originCountryCode = pycountry.countries.search_fuzzy(originCountry)[0].alpha_2
         for d in resp.data[:6]:
             price = numbers.format_currency(float(d["price"]["total"]), d["price"]["currency"], locale='en')
             flight = {
