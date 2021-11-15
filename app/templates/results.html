@@ -39,7 +39,7 @@
                 <br>
                 {{ flights.covid.mask.text | safe }} All incoming passengers will need to be tested for COVID, {{ flights.covid.testing.text | safe }}.
             </div>
-
+ 
             {% for flight in flights.flights %}
                 <div class="flight">
                     {% for t in flight.travel %}
