@@ -8,6 +8,9 @@ from amadeus import Client, ResponseError
 from secret import *
 from pyairports.airports import Airports
 import pycountry
+from geopy.geocoders import Nominatim
+
+print(">>> Ready! ")
 
 HOST_NAME = os.environ.get("OPENSHIFT_APP_DNS", "localhost")
 APP_NAME = os.environ.get("OPENSHIFT_APP_NAME", "hack-apac-2021")
@@ -20,8 +23,9 @@ client = Client(
     client_secret=AMADEUS_API_SECRET
 )
 airports = Airports()
+geocoder = Nominatim(user_agent="geoapiExercises")
 
-def authorizeAmadeus():
+def generate_amadeus_access_token():
     r = requests.post(
             "https://test.api.amadeus.com/v1/security/oauth2/token", 
             data={
@@ -34,6 +38,26 @@ def authorizeAmadeus():
         return r.json()["access_token"]
     else:
         return None
+    
+def amadeus_get(endpoint : str):
+    # print("Endpoint = ", "https://test.api.amadeus.com" + endpoint)
+    r = requests.get(
+            "https://test.api.amadeus.com" + endpoint, 
+            headers={
+                "authorization": "Bearer " + AMADEUS_ACCES_TOKEN
+            }
+        )
+    if r.status_code != 200:
+        print(f"[INFO] Status code is _NOT_ 200, but {r.status_code}. Re-generating AMADEUS_ACCESS_TOKEN")
+        AMADEUS_ACCESS_TOKEN = generate_amadeus_access_token()
+        r = requests.get(
+            "https://test.api.amadeus.com" + endpoint, 
+            headers={
+                "authorization": "Bearer " + AMADEUS_ACCES_TOKEN
+            }
+        )
+    return r.json()
+
 
 @app.route("/", methods=["GET"])
 def index():
@@ -79,6 +103,94 @@ def results():
     except ResponseError as error:
         print(f"[Error] {error}")
         return render_template("results.html")
+
+def get_covid_data(origin: str, destination : str):
+    """
+        `origin` and `destination` need to be city names.
+        Eg: Boston/Chicago/Delhi etc
+    """
+    destination_country_name = geocoder.geocode(str(destination))[0].split(",")[-1].strip()  # Example: India
+    if destination_country_name == "España":
+        destination_country_name = "Spain"
+    destination_country_code = pycountry.countries.search_fuzzy(destination_country_name)[0].alpha_2 # IN
+
+    origin_country_name = geocoder.geocode(str(destination))[0].split(",")[-1].strip() # Example: United States
+    if origin_country_name == "España":
+        origin_country_name = "Spain"
+    origin_country_code = pycountry.countries.search_fuzzy(origin_country_name)[0].alpha_2 # US
+
+    output = amadeus_get(f"/v1/duty-of-care/diseases/covid19-area-report?countryCode={country_code}")
+    if output is None:
+        raise ValueError("output is None")
+    
+    summary = output["data"]["summary"]
+    disease_risk_level = output["data"]["diseaseRiskLevel"] # High/Medium/Low
+    hotspots = output["data"]["hotspots"]
+
+    display_hotspots = False
+    if origin.strip() in hotspots:
+        display_hotspots = True
+
+    # Access Restrictions
+    access_restrictions = output["data"]["areaAccessRestriction"]["entry"]
+    access_restrictions_ban = access_restrictions["ban"] # Partial/Complete
+    access_restrictions_text = access_restrictions["text"] 
+
+    # Is origin country a banned country to travel from, for the destination country?
+    origin_country_banned = False
+    for i in access_restrictions["bannedArea"]:
+        if i["areaType"] == "country" and i["iataCode"] == origin_country_code:
+            origin_country_banned = True
+        
+    # What about land/maritime borders?
+    maritime_border_ban_text = ""
+    land_border_ban_text = ""
+    for i in access_restrictions["borderBan"]:
+        if "maritime" in i["borderType"]:
+            maritime_border_ban_text = i["status"].strip()
+        else:
+            land_border_ban_text = i["status"].strip()
+
+    # Covid testing guidelnes
+    testing = output["data"]["areaAccessRestriction"]["diseaseTesting"]
+    is_testing_required = True if "Yes" in testing["isRequired"] else False
+    when_is_testing_required = testing["when"] # Before/After Travel
+    testing_requirement = testing["requirement"]
+    testing_rules = testing["rules"] # URL to testing requirements 
+
+    # Quarantine
+    quarantine = output["data"]["areaAccessRestriction"]["diseaseTesting"]["quarantineModality"]
+    quarantine_requirements_text = quarantine["text"]
+    quarantine_requirements_url = quarantine["rules"] # URL to quarantine requirements
+
+    # Mask usage
+    mask = output["data"]["areaAccessRestriction"]["diseaseTesting"]["mask"]
+    mask_is_required = mask["isRequired"] # "Yes"/"No"/"Yes, Conditional"
+    mask_learn_more_text = mask["text"] # More details about mask usage
+
+    # Vaccine stats
+    vaccine = output["data"]["areaAccessRestriction"]["diseaseTesting"]["diseaseVaccination"]
+    vaccination_is_required = True if "Yes" in vaccine["isRequired"] else False
+    vaccination_reference_link = vaccine["referenceLink"] # Reference URL
+    accepted_vaccines = vaccine["qualifiedVaccines"] # Dictionary of qualified vaccines with information baked in
+
+    vaccination_stats = output["data"]["areaVaccinated"]
+    single_dose_percent = ""
+    two_doses_percent = ""
+    for i in vaccination_stats:
+        if i["vaccinationDoseStatus"].strip() == "oneDose":
+            single_dose_percent = i["percentage"] + "%"
+        else:
+            two_doses_percent = i["percentage"] + "%"
+
+    """
+        Return a dictionary with ALL of the variable to be displayed in the banner. Arrange it as per your wish. We'll remove unnecessary stuff later
+    """
+    return dict({
+
+    })
+
+# get_covid_data("Boston", "Chicago")
 
 @app.route("/hello")
 def hello():
