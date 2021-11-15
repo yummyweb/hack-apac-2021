@@ -36,7 +36,7 @@
                     <h2>COVID Level: 🟢</h2>
                 {% endif %}
                 <br>
-                {{ flights.covid.mask.text|safe }} All incoming passengers will need to be tested for COVID, {{ flights.covid.testing.text }}.
+                {{ flights.covid.mask.text | safe }} All incoming passengers will need to be tested for COVID, {{ flights.covid.testing.text }}.
             </div>
             {% for flight in flights.flights %}
                 <div class="flight">
