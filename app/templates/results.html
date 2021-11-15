@@ -29,8 +29,10 @@
     <div class="container">
         <div class="flights" id="flight">
             <div class="banner">
-                {% if display_hotspots %}
+                {% if flights.covid.hotspot.disease_risk_level.lower() == "high" %}
                     <h2>Covid-19 Risk: 🔴<span style="color: red;"> {{ flights.covid.hotspot.disease_risk_level | safe }}</span></h2>
+                {% elif flights.covid.hotspot.disease_risk_level.lower() == "medium" %}
+                    <h2>Covid-19 Risk: 🟠<span style="color: orange;"> {{ flights.covid.hotspot.disease_risk_level | safe }}</span></h2>
                 {% else %}
                     <h2>Covid-19 Risk: 🟢<span style="color: green;"> {{ flights.covid.hotspot.disease_risk_level | safe }}</span></h2>
                 {% endif %}

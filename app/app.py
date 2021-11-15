@@ -169,9 +169,10 @@ def get_covid_data(origin: str, destination : str):
     print("Disease risk level = ", disease_risk_level)
     hotspots = output["data"]["hotspots"]
 
-    display_hotspots = False
-    if origin.strip() in hotspots:
-        display_hotspots = True
+    display_hotspots = disease_risk_level
+    # display_hotspots = False
+    # if origin.strip() in hotspots:
+    #     display_hotspots = True
 
     # Access Restrictions
     access_restrictions = output["data"]["areaAccessRestriction"]["entry"]
