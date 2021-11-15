@@ -18,16 +18,16 @@
         <div class="container">
             <nav>
                 <ul>
-                    <li><a href="#">Flights</a></li>
+                    <li><a id="flight-link" href="#">Flights</a></li>
                     <li><a href="#">Hotels</a></li>
-                    <li><a href="#">Destination</a></li>
+                    <li><a id="dest-link" href="#">Destination</a></li>
                 </ul>
             </nav>
         </div>
 </header>
  
     <div class="container">
-        <div class="flights">
+        <div class="flights" id="flight">
             <div class="banner">
                 {% if display_hotspots %}
                     <h2>Covid-19 Risk: 🔴<span style="color: red;">{{ flights.covid.hotspot.disease_risk_level }}</span></h2>
@@ -57,6 +57,25 @@
                 </div>
             {% endfor %}
         </div>
+        <div class="flights" id="destination" style="display: none;">
+            {% for destination in flights.destination %}
+                    <div class="flight">
+                        <p>{{ destination.name }}</p>
+                    </div>
+            {% endfor %}
+        </div>
     </div>
+
+    <script>
+        document.getElementById("dest-link").addEventListener("click", () => {
+            document.getElementById("destination").style.display = "flex"
+            document.getElementById("flight").style.display = "none"
+        })
+
+        document.getElementById("flight-link").addEventListener("click", () => {
+            document.getElementById("destination").style.display = "none"
+            document.getElementById("flight").style.display = "flex"
+        })
+    </script>
 </body>
 </html>

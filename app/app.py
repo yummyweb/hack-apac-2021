@@ -69,8 +69,12 @@ def results():
     try:
         origin_airport = get_airport(request.form["origin"])
         destination_airport = get_airport(request.form["to"])
+        destination_city = str(request.form["to"])
+        r = requests.get(f"https://eu1.locationiq.com/v1/search.php?key={LOCATION_IQ}&city={destination_city}&format=json")
+        destination_lat = str(r.json()[0]["lat"])
+        destination_lng = str(r.json()[0]["lon"])
+        destination_content = amadeus_get(f"/v1/reference-data/locations/pois?latitude={destination_lat}&longitude={destination_lng}")["data"]
         covid_data = get_covid_data(str(request.form["origin"]), str(request.form["to"]))
-
         resp = client.shopping.flight_offers_search.get(
             originLocationCode=str(origin_airport["iataCode"]),
             destinationLocationCode=str(destination_airport["iataCode"]),
@@ -102,7 +106,8 @@ def results():
 
             flights["flights"].append(flight)
         
-        flights["covid"] = covid_data        
+        flights["covid"] = covid_data
+        flights["destination"] =  destination_content[:6] if len(destination_content) > 6 else destination_content
         return render_template("results.html", flights=flights)
     except ResponseError as error:
         print(f"[Error] {error}")
@@ -117,11 +122,15 @@ def get_covid_data(origin: str, destination : str):
     destination_country_name = geocoder.geocode(str(destination))[0].split(",")[-1].strip()  # Example: India
     if destination_country_name == "España":
         destination_country_name = "Spain"
+    elif destination_country_name == "Deutschland":
+        destination_country_name = "Germany"
     destination_country_code = pycountry.countries.search_fuzzy(destination_country_name)[0].alpha_2 # IN
 
     origin_country_name = geocoder.geocode(str(destination))[0].split(",")[-1].strip() # Example: United States
     if origin_country_name == "España":
         origin_country_name = "Spain"
+    elif origin_country_name == "Deutschland":
+        origin_country_name = "Germany"
     origin_country_code = pycountry.countries.search_fuzzy(origin_country_name)[0].alpha_2 # US
 
     output = amadeus_get(f"/v1/duty-of-care/diseases/covid19-area-report?countryCode={destination_country_code}")
