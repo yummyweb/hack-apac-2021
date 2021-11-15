@@ -72,10 +72,10 @@ def get_jwt():
     return r.json()["access_token"]
 
 def get_hotels(city):
+    get_jwt()
     r = requests.get(f"https://api.makcorps.com/free/{city}", headers={
         "authorization": "JWT " + str(get_jwt())
     })
-    print(r.json())
     return r.json()["Comparison"]
 
 @app.route("/", methods=["GET"])
@@ -96,7 +96,7 @@ def results():
         except:
             destination_content = None
         covid_data = get_covid_data(str(request.form["origin"]), str(request.form["to"]))
-        hotel_list = get_hotels(destination_city)
+        hotel_list = []
         resp = client.shopping.flight_offers_search.get(
             originLocationCode=str(origin_airport["iataCode"]),
             destinationLocationCode=str(destination_airport["iataCode"]),
