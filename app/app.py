@@ -96,7 +96,7 @@ def results():
         except:
             destination_content = None
         covid_data = get_covid_data(str(request.form["origin"]), str(request.form["to"]))
-        hotel_list = []
+        hotel_list = get_hotels(str(request.form["to"]))
         resp = client.shopping.flight_offers_search.get(
             originLocationCode=str(origin_airport["iataCode"]),
             destinationLocationCode=str(destination_airport["iataCode"]),
