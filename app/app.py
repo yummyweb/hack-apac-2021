@@ -135,6 +135,7 @@ def results():
         print(f"[Error] {error}")
         return render_template("results.html")
 
+
 def get_covid_data(origin: str, destination : str):
     """
         `origin` and `destination` need to be city names.
@@ -160,6 +161,7 @@ def get_covid_data(origin: str, destination : str):
     
     summary = output["data"]["summary"]
     disease_risk_level = output["data"]["diseaseRiskLevel"] # High/Medium/Low
+    print("Disease risk level = ", disease_risk_level)
     hotspots = output["data"]["hotspots"]
 
     display_hotspots = False
@@ -227,13 +229,16 @@ def get_covid_data(origin: str, destination : str):
         },
         "testing": {
             "required": is_testing_required,
-            "text": when_is_testing_required
+            "text": "<strong>" + when_is_testing_required.lower() + "</strong>"
         },
         "quarantine": {
             "required": quarantine_requirements_mandatory,
             "text": quarantine_requirements_text
         },
-        "hotspot": display_hotspots
+        "hotspot": {
+            "display_hostspots": display_hotspots,
+            "disease_risk_level": disease_risk_level
+        }
     })
 
 # get_covid_data("Boston", "Chicago")

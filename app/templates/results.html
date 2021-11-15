@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="../static/css/results.css">
     <title>Xed</title>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
-
 </head>
 <body>
     <a href="index.html" class="home"><h2 id="title-xed"> XED</h2></a>
@@ -31,13 +30,14 @@
         <div class="flights" id="flight">
             <div class="banner">
                 {% if display_hotspots %}
-                    <h2>COVID Level: 🔴</h2>
+                    <h2>Covid-19 Risk: 🔴<span style="color: red;">{{ flights.covid.hotspot.disease_risk_level }}</span></h2>
                 {% else %}
-                    <h2>COVID Level: 🟢</h2>
+                    <h2>Covid-19 Risk: 🟢<span style="color: green;">{{ flights.covid.hotspot.disease_risk_level }}</span></h2>
                 {% endif %}
                 <br>
                 {{ flights.covid.mask.text|safe }} All incoming passengers will need to be tested for COVID, {{ flights.covid.testing.text }}.
             </div>
+
             {% for flight in flights.flights %}
                 <div class="flight">
                     {% for t in flight.travel %}
