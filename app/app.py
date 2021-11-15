@@ -10,7 +10,6 @@ from pyairports.airports import Airports
 import pycountry
 from geopy.geocoders import Nominatim
 
-print(">>> Ready! ")
 
 HOST_NAME = os.environ.get("OPENSHIFT_APP_DNS", "localhost")
 APP_NAME = os.environ.get("OPENSHIFT_APP_NAME", "hack-apac-2021")
@@ -23,7 +22,7 @@ client = Client(
     client_secret=AMADEUS_API_SECRET
 )
 airports = Airports()
-geocoder = Nominatim(user_agent="geoapiExercises")
+geocoder = Nominatim(user_agent="XED")
 
 def generate_amadeus_access_token():
     r = requests.post(
@@ -40,7 +39,6 @@ def generate_amadeus_access_token():
         return None
     
 def amadeus_get(endpoint : str):
-    # print("Endpoint = ", "https://test.api.amadeus.com" + endpoint)
     r = requests.get(
             "https://test.api.amadeus.com" + endpoint, 
             headers={
@@ -49,15 +47,18 @@ def amadeus_get(endpoint : str):
         )
     if r.status_code != 200:
         print(f"[INFO] Status code is _NOT_ 200, but {r.status_code}. Re-generating AMADEUS_ACCESS_TOKEN")
-        AMADEUS_ACCESS_TOKEN = generate_amadeus_access_token()
+        new_token = generate_amadeus_access_token()
         r = requests.get(
-            "https://test.api.amadeus.com" + endpoint, 
+            "https://test.api.amadeus.com" + endpoint,
             headers={
-                "authorization": "Bearer " + AMADEUS_ACCES_TOKEN
+                "authorization": "Bearer " + new_token
             }
         )
     return r.json()
 
+def get_airport(city):
+    resp = amadeus_get(f"/v1/reference-data/locations?subType=CITY,AIRPORT&keyword={city}")
+    return resp["data"][1]
 
 @app.route("/", methods=["GET"])
 def index():
@@ -66,17 +67,17 @@ def index():
 @app.route("/results", methods=["POST"])
 def results():
     try:
+        origin_airport = get_airport(request.form["origin"])
+        destination_airport = get_airport(request.form["to"])
+        covid_data = get_covid_data(request.form["origin"], request.form["to"])
+
         resp = client.shopping.flight_offers_search.get(
-            originLocationCode=str(request.form["origin"]),
-            destinationLocationCode=str(request.form["to"]),
-            departureDate="2021-12-10",
-            adults=int(request.form["adults"]))
+            originLocationCode=str(origin_airport["iataCode"]),
+            destinationLocationCode=str(destination_airport["iataCode"]),
+            departureDate=str(request.form["date"]),
+            adults=1)
 
         flights = []
-        destCountry = airports.airport_iata(str(request.form["to"]))[2]
-        originCountry = airports.airport_iata(str(request.form["origin"]))[2]
-        destCountryCode = pycountry.countries.search_fuzzy(destCountry)[0].alpha_2
-        originCountryCode = pycountry.countries.search_fuzzy(originCountry)[0].alpha_2
         for d in resp.data[:6]:
             price = numbers.format_currency(float(d["price"]["total"]), d["price"]["currency"], locale="en")
             flight = {
@@ -98,7 +99,8 @@ def results():
                 })
 
             flights.append(flight)
-
+        
+        flights["covid"] = covid_data        
         return render_template("results.html", flights=flights)
     except ResponseError as error:
         print(f"[Error] {error}")
@@ -187,14 +189,17 @@ def get_covid_data(origin: str, destination : str):
         Return a dictionary with ALL of the variable to be displayed in the banner. Arrange it as per your wish. We'll remove unnecessary stuff later
     """
     return dict({
-
+        "mask": {
+            "required": mask_is_required,
+            "text": mask_learn_more_text
+        },
+        "testing": {
+            "required": is_testing_required,
+            "text": when_is_testing_required
+        }
     })
 
 # get_covid_data("Boston", "Chicago")
-
-@app.route("/hello")
-def hello():
-    return "Hello World!"
 
 @app.route("/stats")
 def stats():

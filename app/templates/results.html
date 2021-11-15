@@ -21,7 +21,6 @@
                 <ul>
                     <li><a href="#">Flights</a></li>
                     <li><a href="#">Hotels</a></li>
-                    <li><a href="#">Covid</a></li>
                     <li><a href="#">Destination</a></li>
                 </ul>
             </nav>
@@ -30,6 +29,9 @@
  
     <div class="container">
         <div class="flights">
+            <div class="banner">
+                <p>{{ flights }}</p>
+            </div>
             {% for flight in flights %}
                 <div class="flight">
                     {% for t in flight.travel %}
