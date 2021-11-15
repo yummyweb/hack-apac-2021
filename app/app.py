@@ -22,7 +22,14 @@ client = Client(
 airports = Airports()
 
 def authorizeAmadeus():
-    r = requests.post("https://test.api.amadeus.com/v1/security/oauth2/token", data={'grant_type': 'client_credentials', 'client_id': AMADEUS_API_KEY, 'client_secret': AMADEUS_API_SECRET})
+    r = requests.post(
+            "https://test.api.amadeus.com/v1/security/oauth2/token", 
+            data={
+                "grant_type": "client_credentials", 
+                "client_id": AMADEUS_API_KEY, 
+                "client_secret": AMADEUS_API_SECRET
+            }
+        )
     if r.json()["state"] == "approved":
         return r.json()["access_token"]
     else:
@@ -38,7 +45,7 @@ def results():
         resp = client.shopping.flight_offers_search.get(
             originLocationCode=str(request.form["origin"]),
             destinationLocationCode=str(request.form["to"]),
-            departureDate='2021-12-10',
+            departureDate="2021-12-10",
             adults=int(request.form["adults"]))
 
         flights = []
@@ -47,7 +54,7 @@ def results():
         destCountryCode = pycountry.countries.search_fuzzy(destCountry)[0].alpha_2
         originCountryCode = pycountry.countries.search_fuzzy(originCountry)[0].alpha_2
         for d in resp.data[:6]:
-            price = numbers.format_currency(float(d["price"]["total"]), d["price"]["currency"], locale='en')
+            price = numbers.format_currency(float(d["price"]["total"]), d["price"]["currency"], locale="en")
             flight = {
                 "travel": [],
                 "price": price
@@ -92,9 +99,9 @@ def stats():
 def response():
     try:
         resp = client.shopping.flight_offers_search.get(
-            originLocationCode='MAD',
-            destinationLocationCode='ATH',
-            departureDate='2022-06-01',
+            originLocationCode="MAD",
+            destinationLocationCode="ATH",
+            departureDate="2022-06-01",
             adults=1)
         return jsonify(resp.data)
     except ResponseError as error:
