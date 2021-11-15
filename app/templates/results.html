@@ -31,9 +31,9 @@
         <div class="flights">
             <div class="banner">
                 {% if display_hotspots %}
-                    <h3>COVID Level: 🟢</h3>
+                    <h2>COVID Level: 🟢</h2>
                 {% else %}
-                    <h3>COVID Level: 🔴</h3>
+                    <h2>COVID Level: 🔴</h2>
                 {% endif %}
                 <br>
                 {{ flights.covid.mask.text|safe }} All incoming passengers will need to be tested for COVID, {{ flights.covid.testing.text }}.
