@@ -65,7 +65,7 @@ def get_city_code(city):
     return resp["data"][0]
 
 def get_jwt():
-    r = requests.post("https://api.makcorps.com/auth", data={
+    r = requests.post("https://api.makcorps.com/auth", json={
         "username": "antriksh1234",
         "password": "qixmit-1sikfe-vanvuM"
     }, headers={ "content-type": "application/json" })
