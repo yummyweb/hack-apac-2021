@@ -29,10 +29,12 @@
  
     <div class="container">
         <div class="flights">
-            <div class="flight">
-                <p>{{ flights.covid.mask.required }}</p>
+            <div class="banner">
+                <h3>COVID Requirements</h3>
+                <br>
+                {{ flights.covid.mask.text|safe }}
             </div>
-            {% for flight in flights %}
+            {% for flight in flights.flights %}
                 <div class="flight">
                     {% for t in flight.travel %}
                         {% if flight.travel|length > loop.index0+1 %}

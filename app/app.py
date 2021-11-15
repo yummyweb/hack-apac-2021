@@ -77,7 +77,9 @@ def results():
             departureDate=str(request.form["date"]),
             adults=1)
 
-        flights = []
+        flights = {
+            "flights": []
+        }
         for d in resp.data[:6]:
             price = numbers.format_currency(float(d["price"]["total"]), d["price"]["currency"], locale="en")
             flight = {
@@ -98,7 +100,7 @@ def results():
                     "airline": airline.data[0]["commonName"]
                 })
 
-            flights.append(flight)
+            flights["flights"].append(flight)
         
         flights["covid"] = covid_data        
         return render_template("results.html", flights=flights)
@@ -165,7 +167,6 @@ def get_covid_data(origin: str, destination : str):
     quarantine = output["data"]["areaAccessRestriction"]["quarantineModality"]
     quarantine_requirements_text = quarantine["text"]
     quarantine_requirements_mandatory = False if "not required" in quarantine_requirements_text else True
-    quarantine_requirements_url = quarantine["rules"] # URL to quarantine requirements
 
     # Mask usage
     mask = output["data"]["areaAccessRestriction"]["mask"]
@@ -175,8 +176,6 @@ def get_covid_data(origin: str, destination : str):
     # Vaccine stats
     vaccine = output["data"]["areaAccessRestriction"]["diseaseVaccination"]
     vaccination_is_required = True if "Yes" in vaccine["isRequired"] else False
-    vaccination_reference_link = vaccine["referenceLink"] # Reference URL
-    accepted_vaccines = vaccine["qualifiedVaccines"] # Dictionary of qualified vaccines with information baked in
 
     vaccination_stats = output["data"]["areaVaccinated"]
     single_dose_percent = ""
