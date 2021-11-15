@@ -35,7 +35,7 @@
                     <h2>Covid-19 Risk: 🟢<span style="color: green;"> {{ flights.covid.hotspot.disease_risk_level | safe }}</span></h2>
                 {% endif %}
                 <br>
-                {{ flights.covid.mask.text | safe }} All incoming passengers will need to be tested for COVID, {{ flights.covid.testing.text }}.
+                {{ flights.covid.mask.text | safe }} All incoming passengers will need to be tested for COVID, {{ flights.covid.testing.text | safe }}.
             </div>
 
             {% for flight in flights.flights %}
