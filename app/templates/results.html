@@ -30,9 +30,9 @@
         <div class="flights" id="flight">
             <div class="banner">
                 {% if display_hotspots %}
-                    <h2>Covid-19 Risk: 🔴<span style="color: red;">{{ flights.covid.hotspot.disease_risk_level }}</span></h2>
+                    <h2>Covid-19 Risk: 🔴<span style="color: red;"> {{ flights.covid.hotspot.disease_risk_level }}</span></h2>
                 {% else %}
-                    <h2>Covid-19 Risk: 🟢<span style="color: green;">{{ flights.covid.hotspot.disease_risk_level }}</span></h2>
+                    <h2>Covid-19 Risk: 🟢<span style="color: green;"> {{ flights.covid.hotspot.disease_risk_level }}</span></h2>
                 {% endif %}
                 <br>
                 {{ flights.covid.mask.text | safe }} All incoming passengers will need to be tested for COVID, {{ flights.covid.testing.text }}.
