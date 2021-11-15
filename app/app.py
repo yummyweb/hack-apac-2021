@@ -161,19 +161,19 @@ def get_covid_data(origin: str, destination : str):
     testing_rules = testing["rules"] # URL to testing requirements 
 
     # Quarantine
-    print(output["data"]["areaAccessRestriction"]["diseaseTesting"])
-    quarantine = output["data"]["areaAccessRestriction"]["diseaseTesting"]
+    # print(output["data"]["areaAccessRestriction"]["quarantineModality"])
+    quarantine = output["data"]["areaAccessRestriction"]["quarantineModality"]
     quarantine_requirements_text = quarantine["text"]
-    quarantine_requirements_mandatory = quarantine["requirement"]
+    quarantine_requirements_mandatory = False if "not required" in quarantine_requirements_text else True
     quarantine_requirements_url = quarantine["rules"] # URL to quarantine requirements
 
     # Mask usage
-    mask = output["data"]["areaAccessRestriction"]["diseaseTesting"]["mask"]
+    mask = output["data"]["areaAccessRestriction"]["mask"]
     mask_is_required = mask["isRequired"] # "Yes"/"No"/"Yes, Conditional"
     mask_learn_more_text = mask["text"] # More details about mask usage
 
     # Vaccine stats
-    vaccine = output["data"]["areaAccessRestriction"]["diseaseTesting"]["diseaseVaccination"]
+    vaccine = output["data"]["areaAccessRestriction"]["diseaseVaccination"]
     vaccination_is_required = True if "Yes" in vaccine["isRequired"] else False
     vaccination_reference_link = vaccine["referenceLink"] # Reference URL
     accepted_vaccines = vaccine["qualifiedVaccines"] # Dictionary of qualified vaccines with information baked in
@@ -183,9 +183,9 @@ def get_covid_data(origin: str, destination : str):
     two_doses_percent = ""
     for i in vaccination_stats:
         if i["vaccinationDoseStatus"].strip() == "oneDose":
-            single_dose_percent = i["percentage"] + "%"
+            single_dose_percent = str(i["percentage"]) + "%"
         else:
-            two_doses_percent = i["percentage"] + "%"
+            two_doses_percent = str(i["percentage"]) + "%"
 
     """
         Return a dictionary with ALL of the variable to be displayed in the banner. Arrange it as per your wish. We'll remove unnecessary stuff later
