@@ -68,7 +68,7 @@ def get_jwt():
     r = requests.post("https://api.makcorps.com/auth", data={
         "username": "antriksh1234",
         "password": "qixmit-1sikfe-vanvuM"
-    })
+    }, headers={ "content-type": "application/json" })
     return r.json()["access_token"]
 
 def get_hotels(city):
