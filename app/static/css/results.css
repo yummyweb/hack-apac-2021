@@ -47,6 +47,10 @@ body {
   margin-bottom: 45px;
 }
 
+.banner p {
+  font-size: 18px;
+}
+
 .flight-airport {
   margin-left: 20px;
   font-family: "Red Hat Display";

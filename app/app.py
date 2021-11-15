@@ -201,7 +201,8 @@ def get_covid_data(origin: str, destination : str):
         "quarantine": {
             "required": quarantine_requirements_mandatory,
             "text": quarantine_requirements_text
-        }
+        },
+        "hotspot": display_hotspots
     })
 
 # get_covid_data("Boston", "Chicago")
