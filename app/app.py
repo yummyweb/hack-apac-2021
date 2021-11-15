@@ -161,7 +161,6 @@ def get_covid_data(origin: str, destination : str):
     testing_rules = testing["rules"] # URL to testing requirements 
 
     # Quarantine
-    print(output["data"]["areaAccessRestriction"]["diseaseTesting"])
     quarantine = output["data"]["areaAccessRestriction"]["diseaseTesting"]
     quarantine_requirements_text = quarantine["text"]
     quarantine_requirements_mandatory = quarantine["requirement"]
