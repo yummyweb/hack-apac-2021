@@ -64,9 +64,16 @@ def get_city_code(city):
     resp = amadeus_get(f"/v1/reference-data/locations?subType=CITY,AIRPORT&keyword={city}")
     return resp["data"][0]
 
+def get_jwt():
+    r = requests.post("https://api.makcorps.com/auth", data={
+        "username": "antriksh1234",
+        "password": "qixmit-1sikfe-vanvuM"
+    })
+    return r.json()["access_token"]
+
 def get_hotels(city):
     r = requests.get(f"https://api.makcorps.com/free/{city}", headers={
-        "authorization": "JWT " + MAKCORPS_JWT
+        "authorization": "JWT " + get_jwt()
     })
     return r.json()["Comparison"]
 
